@@ -1,0 +1,146 @@
+{{define "content"}}
+
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-12">
+
+            <!-- Header -->
+            <div class="header">
+                <div class="header-body">
+                    <div class="row align-items-center">
+                        <div class="col">
+
+                            <!-- Pretitle -->
+                            <h6 class="header-pretitle">
+                                Streams
+                            </h6>
+
+                            <!-- Title -->
+                            <h1 class="header-title">
+                                Create a new Stream
+                            </h1>
+
+                        </div>
+                        <div class="col-auto">
+                            &nbsp;
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div class="container-lg">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-10 col-xl-8">
+
+            <form class="tab-content py-6" id="wizardSteps">
+                <div class="form-group">
+
+                    <!-- Label -->
+                    <label>
+                        Stream Path
+                    </label>
+
+                    <small class="form-text text-muted">
+                        Refer to your hardware manual to find available streams
+                    </small>
+
+                    <!-- Input -->
+                    <input type="text" class="form-control" id="add-stream-path" placeholder="/v2/carrier.sysinfo.v1/sensors">
+                </div>
+
+                <div class="form-group">
+
+                    <!-- Label -->
+                    <label>
+                        Webhook Url
+                    </label>
+                    <small class="form-text text-muted">
+                        Every message will be wrapped in JSON and POSTed to this url.
+                    </small>
+
+                    <!-- Input -->
+                    <input type="text" class="form-control" id="add-stream-webhook-url" placeholder="https://mywebsite/receice">
+                </div>
+
+                <!-- Divider -->
+                <hr class="my-5">
+
+                <div id="create-stream-alert" style='display:none' class="alert alert-danger" role="alert">
+                </div>
+
+
+                <!-- Footer -->
+                <div class="row align-items-center">
+                    <div class="col-auto">
+
+                        <!-- Button -->
+                        <a class="btn btn-lg btn-primary" data-toggle="wizard" href="#wizardStepTwo" id='create-stream-submit'>
+
+                              <span id='create-stream-spin'
+                                  class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display:none"></span>
+
+                            Create
+                        </a>
+
+                        <div id="create-stream-success" style='display:none' class="alert alert-success" role="alert">
+                            &#x2713; Created
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    $(function() {
+        $("#create-stream-submit").click(function(){
+
+            $("#create-stream-spin").show();
+            $("#create-stream-submit").addClass('disabled');
+
+
+            $.ajax
+            ({
+                type:       "POST",
+                url:        "/streams",
+                dataType:   'json',
+                contentType: 'application/json',
+                async:      false,
+                data:       JSON.stringify({
+                    path:       $("#add-stream-path").val(),
+                    restart:    30,
+                    webhook:    {
+                        url: $("#add-stream-webhook-url").val(),
+                    }
+                }),
+            })
+            .done(function (data) {
+                console.log(data);
+
+                $("#create-stream-submit").hide();
+                $("#create-stream-success").show();
+                $("#create-stream-alert").hide();
+            })
+            .fail(function (xhr) {
+                $("#create-stream-submit").removeClass('disabled');
+                $("#create-stream-spin").hide();
+                $('#create-stream-alert').show();
+
+                console.log(xhr);
+                $("#create-stream-alert").html(xhr.responseText);
+                var json = JSON.parse(xhr.responseText);
+                console.log(json);
+
+                $("#create-stream-alert").html(json.message);
+            })
+        });
+    });
+</script>
+
+{{end}}

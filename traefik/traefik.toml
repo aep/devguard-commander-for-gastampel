@@ -1,0 +1,22 @@
+[api]
+dashboard = true
+insecure = true
+
+[log]
+level = "DEBUG"
+
+[entryPoints.https]
+address = "0.0.0.0:8998"
+
+[entryPoints.traefik]
+address = ":7007"
+
+[certificatesResolvers.letsencrypt.acme]
+email = "arvid@devguard.io"
+storage = "/etc/traefik/acme.json"
+[certificatesResolvers.letsencrypt.acme.tlsChallenge]
+
+
+[providers.file]
+filename = "/etc/traefik/static.toml"
+

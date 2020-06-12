@@ -1,0 +1,390 @@
+openapi: 3.0.0
+info:
+  description: |
+    Although devguard does offer direct end to end encrypted connections, some users may prefer a third party to establish a connection for them, as it is done by data hungry cloud corporations.
+
+    The Open Hardware API can be called with any standard https client by passing an secretkit in the headers, and a devguard hosted webservice will establish a device connection on behalf of the user.
+
+    We still do not collect any data, however due to the nature of webservices, interception by third parties is possible and the OHA service comes with no waranty whatsoever.
+  title: Devguard Open Hardware API
+  version: 1.0.0
+servers:
+- url: https://oha.devguard.io/
+security:
+- OAuth2: []
+tags:
+- name: vault
+- name: hi
+- name: direct
+- name: streams
+paths:
+  /vault/identities:
+    get:
+      description: |
+        List carrier identities loaded into oha
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: object
+          description: Success
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Failure
+      summary: List carrier identities
+      tags:
+      - vault
+  /vault/networks:
+    get:
+      description: |
+        List carrier networks loaded into oha
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: object
+          description: Success
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Failure
+      summary: List carrier networks
+      tags:
+      - vault
+  /hi/me:
+    get:
+      description: |
+        Dump everything OHA knows about you.
+
+        Can be used to test if an oauth token is valid
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: object
+          description: Success
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Failure
+      summary: Retreive User Data
+      tags:
+      - hi
+  /hi/claim:
+    post:
+      description: |
+        Any device with a carrier identity printed on it can be joined into your network if it is in factory reset mode.
+
+        Most devices have physical buttons to enable factory mode, which clears all settings including existing authorizations.
+      parameters:
+      - explode: true
+        in: query
+        name: target
+        required: true
+        schema:
+          type: string
+        style: form
+      responses:
+        "204":
+          description: Success
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Failure
+      summary: Join a factory-reset device into your network
+      tags:
+      - hi
+  /system/discovery:
+    get:
+      parameters:
+      - explode: true
+        in: query
+        name: target
+        required: true
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: object
+          description: Success
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: unexpected error
+      summary: List available remote streams
+      tags:
+      - direct
+  /system/sysinfo:
+    get:
+      parameters:
+      - explode: true
+        in: query
+        name: target
+        required: true
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: object
+          description: Success
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: unexpected error
+      summary: Device System Information
+      tags:
+      - direct
+  /system/sensors:
+    get:
+      parameters:
+      - explode: true
+        in: query
+        name: target
+        required: true
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: object
+          description: Success
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: unexpected error
+      summary: Device Sensor Information
+      tags:
+      - direct
+  /streams:
+    get:
+      responses:
+        "200":
+          description: list of weebhooks
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: unexpected error
+      summary: List subscriptions
+      tags:
+      - streams
+    post:
+      callbacks:
+        myEvent:
+          '{$request.query#/callback}':
+            post:
+              operationId: myEvent_Post
+              requestBody:
+                $ref: '#/components/requestBodies/inline_object'
+                content:
+                  application/json:
+                    schema:
+                      properties:
+                        message:
+                          example: Some event happened
+                          type: string
+                      required:
+                      - message
+                      type: object
+                required: true
+              responses:
+                "200":
+                  content:
+                    application/json:
+                      schema:
+                        $ref: '#/components/schemas/Error'
+                  description: Your server returns this code if it accepts the callback
+              x-callback-request: true
+      description: |2
+
+        Instructs oha to create a conduit on your behalf which listens on all devices in your network
+        and maintains streams to them. For each message on the stream, it will call an http api on your web server.
+
+
+        The OHA conduit is more limited than the client libraries
+
+          - webhooks have no security whatsoever, and your endpoint may be called from any random stranger.
+          - you cannot actually send any data to the stream.
+          - Messages are sent one by one, and dropped if the webhook endpoint is too slow.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubscriptionRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+          description: subscription created
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: unexpected error
+      summary: Create a new subscription
+      tags:
+      - streams
+  /streams/{id}:
+    delete:
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "204":
+          description: subscription deleted
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: unexpected error
+      summary: Delete subscription
+      tags:
+      - streams
+    put:
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "204":
+          description: subscription changed
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: unexpected error
+      summary: Change subscription
+      tags:
+      - streams
+components:
+  requestBodies:
+    inline_object:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_object'
+      required: true
+  schemas:
+    Error:
+      example:
+        code: code
+        message: message
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+      - code
+      - message
+      type: object
+    SubscriptionRequest:
+      example:
+        path: path
+        webhook:
+          url: https://myserver.com/send/callback/here
+        restart: 0
+      properties:
+        path:
+          type: string
+        webhook:
+          $ref: '#/components/schemas/SubscriptionRequest_webhook'
+        restart:
+          type: integer
+      required:
+      - path
+      - restart
+      - webhook
+      type: object
+    SubscriptionResponse:
+      example:
+        path: path
+        webhook:
+          url: https://myserver.com/send/callback/here
+        restart: 0
+        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      properties:
+        id:
+          format: uuid
+          type: string
+        restart:
+          type: integer
+        path:
+          type: string
+        webhook:
+          $ref: '#/components/schemas/SubscriptionRequest_webhook'
+      required:
+      - path
+      - restart
+      - webhook
+      type: object
+    inline_object:
+      properties:
+        message:
+          example: Some event happened
+          type: string
+      required:
+      - message
+      type: object
+    SubscriptionRequest_webhook:
+      example:
+        url: https://myserver.com/send/callback/here
+      properties:
+        url:
+          example: https://myserver.com/send/callback/here
+          format: uri
+      required:
+      - url
+  securitySchemes:
+    OAuth2:
+      flows:
+        authorizationCode:
+          authorizationUrl: https://devguard.eu.auth0.com/authorize
+          scopes: {}
+          tokenUrl: https://devguard.eu.auth0.com/oauth/token
+      type: oauth2

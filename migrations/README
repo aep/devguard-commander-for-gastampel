@@ -1,0 +1,4 @@
+https://github.com/robinjoseph08/go-pg-migrations
+
+
+  go run *.go migrate

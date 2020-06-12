@@ -1,0 +1,212 @@
+￼
+{{define "head"}}
+<style>
+.hello{ color: red;}
+hr{ border: 1px #ccc dashed;}
+</style>
+{{end}}
+
+{{define "content"}}
+
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-12">
+
+            <!-- Header -->
+            <div class="header">
+                <div class="header-body">
+                    <div class="row align-items-center">
+                        <div class="col">
+
+                            <!-- Pretitle -->
+                            <h6 class="header-pretitle">
+                                {{.user.Id}}
+                            </h6>
+
+                            <!-- Title -->
+                            <h1 class="header-title">
+                                Network Conduit
+                            </h1>
+
+                        </div>
+                        <div class="col-auto">
+                            &nbsp;
+                        </div>
+                    </div> <!-- / .row -->
+                    <!--
+                        <div class="row align-items-center">
+                        <div class="col">
+
+                        <ul class="nav nav-tabs nav-overflow header-tabs">
+                        <li class="nav-item">
+                        <a href="#!" class="nav-link active">
+                        All
+                        </a>
+                        </li>
+                        <li class="nav-item">
+                        <a href="#!" class="nav-link">
+                        Identities
+                        </a>
+                        </li>
+                        <li class="nav-item">
+                        <a href="#!" class="nav-link">
+                        Networks
+                        </a>
+                        </li>
+                        </ul>
+
+                        </div>
+                        </div>
+                    -->
+                </div>
+            </div>
+
+
+
+
+
+
+            <div class="row">
+                <div class="col-12 col-lg-6 col-xl">
+                    <!-- Card -->
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col">
+
+                                    <!-- Title -->
+                                    <h6 class="text-uppercase text-muted mb-2">
+                                        State
+                                    </h6>
+
+                                    <!-- Heading -->
+                                    <span class="h2 mb-0">
+                                        {{.conduit.CurrentState}}
+                                    </span>
+
+                                </div>
+                            </div> <!-- / .row -->
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6 col-xl">
+                    <!-- Card -->
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col">
+
+                                    <!-- Title -->
+                                    <h6 class="text-uppercase text-muted mb-2">
+                                        Devices Connected
+                                    </h6>
+
+                                    <!-- Heading -->
+                                    <span class="h2 mb-0">
+                                        {{.conduit.StatsCurrentConnections}} out of 10
+                                    </span>
+
+                                </div>
+                                <div class="col-auto">
+                                    <!--
+                                        <a class="btn btn-sm btn-outline-primary" href="#!">Upgrade</a>
+                                    -->
+                                </div>
+                            </div> <!-- / .row -->
+
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-12 col-lg-6 col-xl">
+                    <!-- Card -->
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col">
+
+                                    <!-- Title -->
+                                    <h6 class="text-uppercase text-muted mb-2">
+                                        Compute Resources
+                                    </h6>
+
+                                    <!-- Heading -->
+                                    <span class="h2 mb-0">
+                                        {{printf "%.1f" .conduit.StatsCurrentCpuUsage}} %
+                                    </span>
+
+                                </div>
+                            </div> <!-- / .row -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <!-- Card -->
+            <div class="card" data-list='{"valueNames": ["identities-ref", "identities-public", "identities-date", "identities-item", "identities-status"]}'>
+
+
+                <div class='card-header'>
+                    <h4 class="card-header-title">
+                        Events
+                    </h4>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-sm table-nowrap card-table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <a href="#" class="text-muted list-sort" data-sort="identities-public">
+                                        Message
+                                    </a>
+                                </th>
+                                <th>
+                                    <a href="#" class="text-muted list-sort" data-sort="identities-date">
+                                        Date
+                                    </a>
+                                </th>
+                            </tr>
+
+
+                        </thead>
+                        <tbody class='list'>
+                            {{range .events}}
+
+                            <tr>
+                                <td class="identities-public">
+                                    {{.Message}}
+                                </td>
+                                <td class="identities-date">
+                                    <time>{{.CreatedAt.Format "02.01.2006 15:04	MST" }}</time>
+                                </td>
+                            </tr>
+
+
+
+
+
+                            {{end}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div> <!-- / .row -->
+</div>
+
+{{end}}

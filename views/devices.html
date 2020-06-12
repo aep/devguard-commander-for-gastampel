@@ -1,0 +1,123 @@
+￼
+{{define "head"}}
+<style>
+.hello{ color: red;}
+hr{ border: 1px #ccc dashed;}
+</style>
+{{end}}
+
+{{define "content"}}
+
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-12">
+
+            <!-- Header -->
+            <div class="header">
+                <div class="header-body">
+                    <div class="row align-items-center">
+                        <div class="col">
+
+                            <!-- Pretitle -->
+                            <h6 class="header-pretitle">
+                                 {{.user.Id}}
+                            </h6>
+
+                            <!-- Title -->
+                            <h1 class="header-title">
+                                 Devices
+                            </h1>
+
+                        </div>
+                        <div class="col-auto">
+                            &nbsp;
+                        </div>
+                    </div> <!-- / .row -->
+                    <!--
+                    <div class="row align-items-center">
+                        <div class="col">
+
+                            <ul class="nav nav-tabs nav-overflow header-tabs">
+                                <li class="nav-item">
+                                    <a href="#!" class="nav-link active">
+                                        All
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="#!" class="nav-link">
+                                        Identities
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="#!" class="nav-link">
+                                        Networks
+                                    </a>
+                                </li>
+                            </ul>
+
+                        </div>
+                    </div>
+                    -->
+                </div>
+            </div>
+
+            <!-- Card -->
+            <div class="card" data-list='{"valueNames": ["identities-ref", "identities-public", "identities-date", "identities-item", "identities-status"]}'>
+
+                <div class='card-header'>
+                    <h4 class="card-header-title">
+                        Devices
+                    </h4>
+                    <div class="col-auto">
+                        <a href="/_ui/claim" class="btn btn-sm btn-primary lift">
+                            <i class="fe fe-plus"></i> Add Device
+                        </a>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-sm table-nowrap card-table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <a href="#" class="text-muted list-sort" data-sort="identities-public">
+                                        Public
+                                    </a>
+                                </th>
+                                <th>
+                                    <a href="#" class="text-muted list-sort" data-sort="identities-date">
+                                        Date Created
+                                    </a>
+                                </th>
+                            </tr>
+
+
+                        </thead>
+                        <tbody class='list'>
+    {{range .devices}}
+
+
+                            <tr>
+                                <td class="identities-public">
+                                    {{.Identity}}
+                                </td>
+                                <td class="identities-date">
+                                    <time>{{.CreatedAt.Format "02.01.2006" }}</time>
+                                </td>
+                            </tr>
+
+
+
+
+
+    {{end}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div> <!-- / .row -->
+</div>
+
+{{end}}

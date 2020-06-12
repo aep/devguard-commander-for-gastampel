@@ -1,0 +1,221 @@
+{{define "content"}}
+<div class="main-content">
+
+
+
+    <div class="container-lg">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-10 col-xl-8">
+
+                <!-- Form -->
+                <form class="tab-content py-6" id="wizardSteps">
+                    <div class="tab-pane fade show active" id="wizardStepOne" role="tabpanel" aria-labelledby="wizardTabOne">
+
+                        <!-- Header -->
+                        <div class="row justify-content-center">
+                            <div class="col-12 col-md-10 col-lg-8 col-xl-6 text-center">
+
+                                <!-- Title -->
+                                <h1 class="mb-3">
+                                    Scan New Identity
+                                </h1>
+
+                                <!-- Subtitle -->
+                                <p class="mb-5 text-muted">
+                                    Refer to your hardware manual to find the location of the device identity code
+                                </p>
+
+                            </div>
+                        </div> <!-- / .row -->
+
+                        <!-- Team name -->
+                        <div class="form-group">
+
+                            <!-- Label -->
+                            <label>
+                                Identity
+                            </label>
+
+                            <!-- Input -->
+                            <input type="text" class="form-control" id="add-device-identity">
+
+<script>
+    $(function(){
+        $("#add-device-identity").change(function(){
+
+            $("#add-device-identity").val();
+
+            $.getJSON( "/_ui/claim/is_valid_target?target=" + encodeURIComponent($("#add-device-identity").val()), function( data ) {
+                $("#add-device-identity").removeClass("is-invalid");
+                $("#add-device-identity-submit").removeClass("disabled");
+            }).fail(function(){
+                $("#add-device-identity").addClass("is-invalid");
+                $("#add-device-identity-submit").addClass("disabled");
+            });
+        });
+
+
+        ////TODO FOR testing
+        //$("#add-device-identity").val("cDHGIDDDYEX5U6L3QBZFYUSLVIHXOF2KUC7QJRVO6WEAX6PJLQJ62RPY");
+        //$("#add-device-identity-submit").removeClass("disabled");
+
+    });
+</script>
+
+                        </div>
+
+                        <!-- Divider -->
+                        <hr class="my-5">
+
+                        <!-- Footer -->
+                        <div class="row align-items-center">
+                            <div class="col-auto">
+
+                                <!-- Button -->
+                                <button class="btn btn-lg btn-white" type="reset">Cancel</button>
+
+                            </div>
+                            <div class="col text-center">
+
+                                <!-- Step -->
+                                <h6 class="text-uppercase text-muted mb-0">Step 1 of 2</h6>
+
+                            </div>
+                            <div class="col-auto">
+
+                                <!-- Button -->
+                                <a class="btn btn-lg btn-primary disabled" data-toggle="wizard" href="#wizardStepTwo" id='add-device-identity-submit'>
+                                    Claim
+                                </a>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    <div class="tab-pane fade" id="wizardStepTwo" role="tabpanel" aria-labelledby="wizardTabTwo">
+
+
+
+
+                        <!-- Header -->
+                        <div class="row justify-content-center">
+                            <div class="col-12 col-md-10 col-lg-8 col-xl-6 text-center">
+
+                                <!-- Title -->
+                                <h1 class="mb-3">
+                                    Claiming Device
+                                </h1>
+
+                                <!-- Subtitle -->
+                                <p class="mb-5 text-muted">
+                                Waiting for device to respond to claim
+                                </p>
+
+                            </div>
+
+                        </div> <!-- / .row -->
+
+
+                        <div class="d-flex justify-content-center">
+                            <div id='add-device-identity-spin' class="circle-loader">
+                                <div class="checkmark draw"></div>
+                            </div>
+                        </div>
+
+                        <div id="add-device-identity-alert" style='display:none' class="alert alert-danger" role="alert">
+                        </div>
+
+
+<script>
+    $(function(){
+        $("#add-device-identity-alert").hide()
+        $("#add-device-identity-done").addClass("disabled");
+        $("#add-device-identity-spin").removeClass('load-complete');
+        $("#add-device-identity-spin .checkmark").hide();
+
+
+        $("#add-device-identity-submit").click(function(){
+            setTimeout(function(){
+                $.ajax
+                ({
+                    type:       "POST",
+                    url:        "/hi/claim?target=" + encodeURIComponent($("#add-device-identity").val()),
+                    dataType:   'json',
+                    contentType: 'application/json',
+                    async:      false,
+                    data:       JSON.stringify({ target: $("#add-device-identity").val() }),
+                })
+                .done(function (data) {
+                    console.log(data);
+                    $("#add-device-identity-spin").addClass('load-complete');
+                    $("#add-device-identity-spin .checkmark").show();
+                    $("#add-device-identity-done").removeClass("disabled");
+                })
+                .fail(function (xhr) {
+                    console.log(xhr);
+                    var json = JSON.parse(xhr.responseText);
+                    console.log(json);
+                    $("#add-device-identity-spin").hide();
+                    $("#add-device-identity-alert").html(json.message);
+                    $("#add-device-identity-alert").show();
+                })
+            }, 200);
+        });
+    });
+</script>
+
+
+
+                        <!-- Divider -->
+                        <hr class="my-5">
+
+                        <!-- Footer -->
+                        <div class="row align-items-center">
+                            <div class="col-auto">
+
+                            </div>
+                            <div class="col-auto">
+
+                                <!-- Button -->
+                                <a class="btn btn-lg btn-white" data-toggle="wizard" href="#wizardStepOne">Back</a>
+
+                            </div>
+                            <div class="col text-center">
+
+                                <!-- Step -->
+                                <h6 class="text-uppercase text-muted mb-0">Step 2 of 2</h6>
+
+                            </div>
+                            <div class="col-auto">
+
+                                <!-- Button -->
+                                <a class="btn btn-lg btn-primary disabled" id='add-device-identity-done' type="submit" href="/_ui/devices">
+                                    Done
+                                </a>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</div> <!-- / .main-content -->
+
+{{end}}

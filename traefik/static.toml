@@ -1,0 +1,12 @@
+[http]
+  [http.routers]
+     [http.routers.oha]
+        rule = "Host(`oha.devguard.io`)"
+        service = "oha"
+        [http.routers.oha.tls]
+        certresolver = "letsencrypt"
+
+  [http.services]
+    [http.services.oha.loadBalancer]
+      [[http.services.oha.loadBalancer.servers]]
+        url = "http://0.0.0.0:8080"

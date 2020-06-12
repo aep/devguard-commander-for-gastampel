@@ -1,0 +1,158 @@
+￼
+{{define "head"}}
+<style>
+.hello{ color: red;}
+hr{ border: 1px #ccc dashed;}
+</style>
+{{end}}
+
+{{define "content"}}
+
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-12">
+
+            <!-- Header -->
+            <div class="header">
+                <div class="header-body">
+                    <div class="row align-items-center">
+                        <div class="col">
+
+                            <!-- Pretitle -->
+                            <h6 class="header-pretitle">
+                                 {{.user.Id}}
+                            </h6>
+
+                            <!-- Title -->
+                            <h1 class="header-title">
+                                 Webhooks
+                            </h1>
+
+                        </div>
+                        <div class="col-auto">
+                            &nbsp;
+                        </div>
+                    </div> <!-- / .row -->
+                    <!--
+                    <div class="row align-items-center">
+                        <div class="col">
+
+                            <ul class="nav nav-tabs nav-overflow header-tabs">
+                                <li class="nav-item">
+                                    <a href="#!" class="nav-link active">
+                                        All
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="#!" class="nav-link">
+                                        Identities
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="#!" class="nav-link">
+                                        Networks
+                                    </a>
+                                </li>
+                            </ul>
+
+                        </div>
+                    </div>
+                    -->
+                </div>
+            </div>
+
+            <!-- Card -->
+            <div class="card" data-list='{"valueNames": ["identities-ref", "identities-public", "identities-date", "identities-item", "identities-status"]}'>
+
+                <div class='card-header'>
+                    <h4 class="card-header-title">
+                        Webhooks
+                    </h4>
+                    <div class="col-auto">
+                        <a href="/_ui/webhooks/new" class="btn btn-sm btn-primary lift">
+                            <i class="fe fe-plus"></i> Add Webhook
+                        </a>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-sm table-nowrap card-table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <a href="#" class="text-muted">
+                                        Ok
+                                    </a>
+                                </th>
+                                <th>
+                                    <a href="#" class="text-muted list-sort" >
+                                        Path
+                                    </a>
+                                </th>
+                                <th>
+                                    <a href="#" class="text-muted list-sort" >
+                                        Webhook
+                                    </a>
+                                </th>
+                                <th>
+                                    <a href="#" class="text-muted list-sort" >
+                                        Restart Delay
+                                    </a>
+                                </th>
+                                <th>
+                                    <a href="#" class="text-muted list-sort" >
+                                        Id
+                                    </a>
+                                </th>
+                                <th>
+                                    <a href="#" class="text-muted list-sort" >
+                                        Date Created
+                                    </a>
+                                </th>
+                            </tr>
+
+
+                        </thead>
+                        <tbody class='list'>
+    {{range .streams}}
+
+                            <tr>
+                                <td class="identities-public">
+                                    {{if .Disabled}}
+                                        <span class="text-danger">●</span>
+                                    {{else}}
+                                        <span class="text-success">●</span>
+                                    {{end}}
+                                </td>
+                                <td class="identities-date">
+                                    {{.Path}}
+                                </td>
+                                <td class="identities-date">
+                                    {{.WebhookUrl}}
+                                </td>
+                                <td class="identities-date">
+                                    {{.RestartDelay}}
+                                </td>
+                                <td class="identities-public">
+                                    {{.Id}}
+                                </td>
+                                <td class="identities-date">
+                                    <time>{{.CreatedAt.Format "02.01.2006" }}</time>
+                                </td>
+                            </tr>
+
+
+
+
+
+    {{end}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div> <!-- / .row -->
+</div>
+
+{{end}}
